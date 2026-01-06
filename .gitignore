@@ -1,0 +1,11 @@
+# Gemini CLI specific
+.gemini/
+
+# Node.js specific
+node_modules/
+
+# Logs
+*.log
+
+# Temp files
+temp/

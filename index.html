@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Torque Talks</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+        body {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 2rem 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #ff00ff;
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #f0f0f0;
+            margin-top: 0.5rem;
+        }
+
+        .search-container {
+            margin-top: 2rem;
+        }
+
+        #search-bar {
+            width: 50%;
+            padding: 0.8rem;
+            border: 2px solid #00ffff;
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+            font-size: 1rem;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #search-bar:focus {
+            border-color: #ff00ff;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        .schedule-item {
+            display: flex;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-left: 4px solid #00ffff;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            transform: translateX(10px);
+        }
+
+        .time {
+            flex: 0 0 120px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+        }
+
+        .talk-details {
+            flex-grow: 1;
+        }
+
+        .talk-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff00ff;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .speakers {
+            font-style: italic;
+            color: #f0f0f0;
+            margin-bottom: 1rem;
+        }
+
+        .categories {
+            margin-bottom: 1rem;
+        }
+
+        .category {
+            display: inline-block;
+            background-color: #00ffff;
+            color: #1a1a1a;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .description {
+            line-height: 1.6;
+        }
+
+        .break-item, .lunch-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background-color: transparent;
+            border: 2px dashed #ff00ff;
+            border-radius: 8px;
+            color: #ff00ff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tech Torque Talks</h1>
+            <p class="subtitle">A 1-Day Tech Conference</p>
+            <div class="search-container">
+                <input type="text" id="search-bar" placeholder="Search by category (e.g., AI, Web, Data)...">
+            </div>
+        </header>
+        <main id="schedule-container">
+            <!-- Schedule will be dynamically generated here -->
+        </main>
+    </div>
+    <script>
+        const talks = [
+            {
+                title: "The Quantum Leap in AI",
+                speakers: ["Dr. Evelyn Reed"],
+                categories: ["AI", "Quantum Computing"],
+                description: "Exploring the intersection of quantum mechanics and artificial intelligence, and how it will revolutionize computation."
+            },
+            {
+                title: "Frontend Frameworks of the Future",
+                speakers: ["Javier 'Hex' Rodriguez"],
+                categories: ["Web", "JavaScript", "Frontend"],
+                description: "A deep dive into the next generation of frontend frameworks, focusing on performance, developer experience, and new paradigms."
+            },
+            {
+                title: "Cyber-Resilience in a Post-Pandemic World",
+                speakers: ["Anya Sharma", "Ben Carter"],
+                categories: ["Security", "Cybersecurity"],
+                description: "Strategies and best practices for building robust and resilient systems against the evolving landscape of cyber threats."
+            },
+            {
+                title: "The Art of Data Storytelling",
+                speakers: ["Dr. Kenji Tanaka"],
+                categories: ["Data", "Visualization"],
+                description: "Learn how to transform complex data into compelling narratives that drive action and insight."
+            },
+            {
+                title: "Decentralized Identity: The Future of You",
+                speakers: ["Samira 'Glitch' Chen"],
+                categories: ["Blockchain", "Identity", "Web3"],
+                description: "An introduction to decentralized identity and how it's poised to give us back control of our digital selves."
+            },
+            {
+                title: "Ethical Hacking and Proactive Defense",
+                speakers: ["Marcus 'Phoenix' Jones"],
+                categories: ["Security", "Hacking"],
+                description: "A live demonstration of ethical hacking techniques and how to use them to identify and patch vulnerabilities in your own systems."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scheduleContainer = document.getElementById('schedule-container');
+            const searchBar = document.getElementById('search-bar');
+
+            const addMinutes = (date, minutes) => new Date(date.getTime() + minutes * 60000);
+            const formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const renderFullSchedule = (filter = '') => {
+                scheduleContainer.innerHTML = '';
+                let currentTime = new Date();
+                currentTime.setHours(10, 0, 0, 0); // Event starts at 10:00 AM
+
+                const query = filter.toLowerCase().trim();
+
+                talks.forEach((talk, index) => {
+                    const shouldDisplayTalk = query === '' || talk.categories.some(cat => cat.toLowerCase().includes(query));
+
+                    if (shouldDisplayTalk) {
+                        const talkEndTime = addMinutes(currentTime, 60);
+                        const scheduleItem = document.createElement('div');
+                        scheduleItem.classList.add('schedule-item');
+                        scheduleItem.innerHTML = `
+                            <div class="time">${formatTime(currentTime)} - ${formatTime(talkEndTime)}</div>
+                            <div class="talk-details">
+                                <h2 class="talk-title">${talk.title}</h2>
+                                <p class="speakers">By: ${talk.speakers.join(', ')}</p>
+                                <div class="categories">${talk.categories.map(cat => `<span class="category">${cat}</span>`).join('')}</div>
+                                <p class="description">${talk.description}</p>
+                            </div>
+                        `;
+                        scheduleContainer.appendChild(scheduleItem);
+                    }
+                    
+                    currentTime = addMinutes(currentTime, 60);
+
+                    // Add breaks
+                    if (index === 2) { // Lunch break after 3rd talk
+                        const lunchEndTime = addMinutes(currentTime, 60);
+                        const lunchItem = document.createElement('div');
+                        lunchItem.classList.add('lunch-item');
+                        lunchItem.innerHTML = `LUNCH BREAK: ${formatTime(currentTime)} - ${formatTime(lunchEndTime)}`;
+                        scheduleContainer.appendChild(lunchItem);
+                        currentTime = lunchEndTime;
+                    } else if (index < talks.length - 1) {
+                        const breakEndTime = addMinutes(currentTime, 10);
+                        const breakItem = document.createElement('div');
+                        breakItem.classList.add('break-item');
+                        breakItem.innerHTML = `BREAK: ${formatTime(currentTime)} - ${formatTime(breakEndTime)}`;
+                        scheduleContainer.appendChild(breakItem);
+                        currentTime = breakEndTime;
+                    }
+                });
+            };
+
+            searchBar.addEventListener('keyup', () => {
+                renderFullSchedule(searchBar.value);
+            });
+
+            // Initial render
+            renderFullSchedule();
+        });
+    </script>
+</body>
+</html>
